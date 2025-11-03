@@ -12,11 +12,12 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173", "https://emi-loan-frontend.netlify.app"], // update Netlify URL after deployment
+  methods: ["GET", "POST"],
+  credentials: true,
+}));
 app.use(bodyParser.json());
-
-// Serve frontend (your loan app UI)
-app.use(express.static(path.join(__dirname, "../frontend")));
 
 // 🧍 User Signup
 app.post("/signup", async (req, res) => {
@@ -107,13 +108,16 @@ app.get("/history/:userId", async (req, res) => {
   }
 });
 
-// ✅ Serve Frontend Entry Point
+// ✅ For Vercel deployment, handle root route
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/index.html"));
+  res.send("✅ EMI Loan Calculator Backend is Live!");
 });
 
-// 🚀 Start Server
-const PORT = 5000;
-app.listen(PORT, () =>
-  console.log(`🚀 Server running on http://localhost:${PORT}`)
-);
+// ✅ Export app for Vercel
+module.exports = app;
+
+// 🧩 Local development mode
+if (require.main === module) {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+}
