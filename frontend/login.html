@@ -1,88 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login | Loan Calculator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login | Loan Calculator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Welcome Back 👋</h1>
-    <p class="subtitle">Login or Signup to continue</p>
+  <div class="container">
+    <h1>Welcome Back 👋</h1>
+    <p class="subtitle">Login or Signup to continue</p>
 
-    <div class="form">
-      <label>Name</label>
-      <input type="text" id="name" placeholder="Enter your name" />
+    <div class="form">
+      <label>Name</label>
+      <input type="text" id="name" placeholder="Enter your name" />
 
-      <label>Email</label>
-      <input type="email" id="email" placeholder="Enter your email" />
+      <label>Email</label>
+      <input type="email" id="email" placeholder="Enter your email" />
 
-      <button onclick="signup()">Signup</button>
-      <button onclick="login()" class="secondary">Login</button>
-    </div>
-    <p id="msg" style="margin-top:10px;"></p>
-  </div>
+      <button onclick="signup()">Signup</button>
+      <button onclick="login()" class="secondary">Login</button>
+    </div>
+    <p id="msg" style="margin-top:10px;"></p>
+  </div>
 
-  <!-- Import backend URL -->
-  <script src="config.js"></script>
+    <script src="config.js"></script>
 
-  <script>
-    async function signup() {
-      const name = document.getElementById("name").value.trim();
-      const email = document.getElementById("email").value.trim();
+  <script>
+    async function signup() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
 
-      if (!name || !email) {
-        document.getElementById("msg").innerText = "⚠️ Please fill all fields.";
-        return;
-      }
+      if (!name || !email) {
+        document.getElementById("msg").innerText = "⚠️ Please fill all fields.";
+        return;
+      }
 
-      try {
-        const res = await fetch(`${BASE_URL}/signup`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email }),
-        });
-        const data = await res.json();
+      try {
+        const res = await fetch(`${BASE_URL}/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email }),
+        });
+        const data = await res.json();
 
-        if (data.user) {
-          localStorage.setItem("user", JSON.stringify(data.user));
-          window.location.href = "index.html";
-        } else {
-          document.getElementById("msg").innerText = data.error || data.message;
-        }
-      } catch (err) {
-        document.getElementById("msg").innerText = "❌ Server not reachable.";
-      }
-    }
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+          // ⭐ FIX: Changed redirect to absolute path for deployment reliability
+          window.location.href = "/index.html"; 
+        } else {
+          document.getElementById("msg").innerText = data.error || data.message;
+        }
+      } catch (err) {
+        document.getElementById("msg").innerText = "❌ Server not reachable.";
+      }
+    }
 
-    async function login() {
-      const email = document.getElementById("email").value.trim();
+    async function login() {
+      const email = document.getElementById("email").value.trim();
 
-      if (!email) {
-        document.getElementById("msg").innerText = "⚠️ Enter your email.";
-        return;
-      }
+      if (!email) {
+        document.getElementById("msg").innerText = "⚠️ Enter your email.";
+        return;
+      }
 
-      try {
-        const res = await fetch(`${BASE_URL}/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email }),
-        });
-        const data = await res.json();
+      try {
+        const res = await fetch(`${BASE_URL}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        const data = await res.json();
 
-        if (data.user) {
-          localStorage.setItem("user", JSON.stringify(data.user));
-          window.location.href = "index.html";
-        } else {
-          document.getElementById("msg").innerText = data.error || data.message;
-        }
-      } catch (err) {
-        document.getElementById("msg").innerText = "❌ Server not reachable.";
-      }
-    }
-  </script>
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+          // ⭐ FIX: Changed redirect to absolute path for deployment reliability
+          window.location.href = "/index.html";
+        } else {
+          document.getElementById("msg").innerText = data.error || data.message;
+        }
+      } catch (err) {
+        document.getElementById("msg").innerText = "❌ Server not reachable.";
+      }
+    }
+  </script>
 </body>
 </html>

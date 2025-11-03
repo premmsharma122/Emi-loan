@@ -1,157 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Loan EMI Calculator 💰</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loan EMI Calculator 💰</title>
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css" />
-  <script src="config.js"></script> <!-- ✅ Load backend base URL -->
-</head>
+  <link rel="stylesheet" href="style.css" />
+  <script src="config.js"></script> </head>
 <body>
-  <header class="top-bar">
-    <p id="welcomeUser" class="welcome"></p>
-    <button id="logoutBtn" class="logout">Logout</button>
-  </header>
+  <header class="top-bar">
+    <p id="welcomeUser" class="welcome"></p>
+    <button id="logoutBtn" class="logout">Logout</button>
+  </header>
 
-  <div class="container">
-    <h1>💸 Loan EMI Calculator</h1>
-    <p class="subtitle">Easily calculate your EMI, total payment, and interest.</p>
+  <div class="container">
+    <h1>💸 Loan EMI Calculator</h1>
+    <p class="subtitle">Easily calculate your EMI, total payment, and interest.</p>
 
-    <div class="form">
-      <div class="input-group">
-        <label>Loan Amount (₹)</label>
-        <input type="number" id="amount" placeholder="Enter amount" />
-      </div>
+    <div class="form">
+      <div class="input-group">
+        <label>Loan Amount (₹)</label>
+        <input type="number" id="amount" placeholder="Enter amount" />
+      </div>
 
-      <div class="input-group">
-        <label>Interest Rate (% per year)</label>
-        <input type="number" id="rate" placeholder="Enter rate" />
-      </div>
+      <div class="input-group">
+        <label>Interest Rate (% per year)</label>
+        <input type="number" id="rate" placeholder="Enter rate" />
+      </div>
 
-      <div class="input-group">
-        <label>Loan Tenure</label>
-        <div style="display: flex; gap: 10px;">
-          <input type="number" id="tenure" placeholder="Enter tenure" />
-          <select id="tenureType">
-            <option value="months">Months</option>
-            <option value="years">Years</option>
-          </select>
-        </div>
-      </div>
+      <div class="input-group">
+        <label>Loan Tenure</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="number" id="tenure" placeholder="Enter tenure" />
+          <select id="tenureType">
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+          </select>
+        </div>
+      </div>
 
-      <button id="calcBtn">Calculate EMI</button>
-    </div>
+      <button id="calcBtn">Calculate EMI</button>
+    </div>
 
-    <div class="result" id="result"></div>
+    <div class="result" id="result"></div>
 
-    <h2>📜 Previous History</h2>
-    <div id="history"></div>
-  </div>
+    <h2>📜 Previous History</h2>
+    <div id="history"></div>
+  </div>
 
-  <footer>
-    <p>Developed @mini_project | Powered by Node.js & MongoDB</p>
-  </footer>
+  <footer>
+    <p>Developed @mini_project | Powered by Node.js & MongoDB</p>
+  </footer>
 
-  <script>
-    const user = JSON.parse(localStorage.getItem("user"));
-    const welcome = document.getElementById("welcomeUser");
-    const logoutBtn = document.getElementById("logoutBtn");
+  <script>
+    const user = JSON.parse(localStorage.getItem("user"));
+    const welcome = document.getElementById("welcomeUser");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-    // Redirect if not logged in
-    if (!user) {
-      window.location.href = "login.html";
-    } else {
-      welcome.innerText = `👤 Logged in as: ${user.name}`;
-    }
+    // ⭐ FIX 1: Use absolute path for reliable redirect on Netlify
+    if (!user) {
+      window.location.href = "/login.html"; 
+    } else {
+      welcome.innerText = `👤 Logged in as: ${user.name}`;
+    }
 
-    // Logout functionality
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("user");
-      window.location.href = "login.html";
-    });
+    // Logout functionality
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("user");
+      window.location.href = "/login.html"; // Fixed logout redirect
+    });
 
-    // Calculate EMI
-    document.getElementById("calcBtn").addEventListener("click", async () => {
-      const amount = parseFloat(document.getElementById("amount").value);
-      const rate = parseFloat(document.getElementById("rate").value);
-      let tenure = parseFloat(document.getElementById("tenure").value);
-      const tenureType = document.getElementById("tenureType").value;
-      const resultDiv = document.getElementById("result");
+    // Calculate EMI
+    document.getElementById("calcBtn").addEventListener("click", async () => {
+      const amount = parseFloat(document.getElementById("amount").value);
+      const rate = parseFloat(document.getElementById("rate").value);
+      let tenure = parseFloat(document.getElementById("tenure").value);
+      const tenureType = document.getElementById("tenureType").value;
+      const resultDiv = document.getElementById("result");
 
-      if (!amount || !rate || !tenure) {
-        resultDiv.innerHTML = "<p class='error'>⚠️ Please enter all fields.</p>";
-        return;
-      }
+      if (!amount || !rate || !tenure) {
+        resultDiv.innerHTML = "<p class='error'>⚠️ Please enter all fields.</p>";
+        return;
+      }
 
-      // Convert years → months if needed
-      let months = tenureType === "years" ? tenure * 12 : tenure;
-      const monthlyRate = rate / 12 / 100;
+      // Convert years → months if needed
+      let months = tenureType === "years" ? tenure * 12 : tenure;
+      const monthlyRate = rate / 12 / 100;
 
-      const emi =
-        (amount * monthlyRate * Math.pow(1 + monthlyRate, months)) /
-        (Math.pow(1 + monthlyRate, months) - 1);
+      const emi =
+        (amount * monthlyRate * Math.pow(1 + monthlyRate, months)) /
+        (Math.pow(1 + monthlyRate, months) - 1);
 
-      const totalPayment = emi * months;
-      const totalInterest = totalPayment - amount;
-      const years = Math.floor(months / 12);
-      const remainingMonths = months % 12;
+      const totalPayment = emi * months;
+      const totalInterest = totalPayment - amount;
+      const years = Math.floor(months / 12);
+      const remainingMonths = months % 12;
 
-      resultDiv.innerHTML = `
-        <div class="card">
-          <p>📅 Tenure: ${
-            years > 0 ? `${years} years ${remainingMonths} months` : `${months} months`
-          }</p>
-          <p>💰 Monthly EMI: ₹${emi.toFixed(2)}</p>
-          <p>💸 Total Interest: ₹${totalInterest.toFixed(2)}</p>
-          <p>🏦 Total Payment: ₹${totalPayment.toFixed(2)}</p>
-        </div>
-      `;
+      resultDiv.innerHTML = `
+        <div class="card">
+          <p>📅 Tenure: ${
+            years > 0 ? `${years} years ${remainingMonths} months` : `${months} months`
+          }</p>
+          <p>💰 Monthly EMI: ₹${emi.toFixed(2)}</p>
+          <p>💸 Total Interest: ₹${totalInterest.toFixed(2)}</p>
+          <p>🏦 Total Payment: ₹${totalPayment.toFixed(2)}</p>
+        </div>
+      `;
 
-      // ✅ Save to MongoDB through deployed backend
-      await fetch(\`\${BASE_URL}/calculate\`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount,
-          rate,
-          years: months / 12,
-          userId: user._id,
-        }),
-      });
+      // ⭐ FIX 2: Corrected the backticks for the template literal
+      await fetch(`${BASE_URL}/calculate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount,
+          rate,
+          years: months / 12,
+          userId: user._id,
+        }),
+      });
 
-      loadHistory();
-    });
+      loadHistory();
+    });
 
-    // Load previous history
-    async function loadHistory() {
-      const res = await fetch(\`\${BASE_URL}/history/\${user._id}\`);
-      const data = await res.json();
-      const historyDiv = document.getElementById("history");
+    // Load previous history
+    async function loadHistory() {
+      const res = await fetch(`${BASE_URL}/history/${user._id}`); // Corrected fetch URL: used template literal
+      const data = await res.json();
+      const historyDiv = document.getElementById("history");
 
-      historyDiv.innerHTML = "";
+      historyDiv.innerHTML = "";
 
-      if (data.length === 0) {
-        historyDiv.innerHTML = "<p>No records yet.</p>";
-        return;
-      }
+      if (data.length === 0) {
+        historyDiv.innerHTML = "<p>No records yet.</p>";
+        return;
+      }
 
-      data.forEach((rec) => {
-        const div = document.createElement("div");
-        div.className = "history-item";
-        div.innerHTML = `
-          <p>💰 <strong>₹${rec.amount}</strong> at ${rec.rate}% for ${Math.round(rec.years * 12)} months</p>
-          <p>EMI: ₹${rec.emi.toFixed(2)} | Interest: ₹${rec.totalInterest.toFixed(2)}</p>
-          <small>${new Date(rec.date).toLocaleString()}</small>
-        `;
-        historyDiv.appendChild(div);
-      });
-    }
+      data.forEach((rec) => {
+        const div = document.createElement("div");
+        div.className = "history-item";
+        div.innerHTML = `
+          <p>💰 <strong>₹${rec.amount}</strong> at ${rec.rate}% for ${Math.round(rec.years * 12)} months</p>
+          <p>EMI: ₹${rec.emi.toFixed(2)} | Interest: ₹${rec.totalInterest.toFixed(2)}</p>
+          <small>${new Date(rec.date).toLocaleString()}</small>
+        `;
+        historyDiv.appendChild(div);
+      });
+    }
 
-    loadHistory();
-  </script>
+    loadHistory();
+  </script>
 </body>
 </html>
