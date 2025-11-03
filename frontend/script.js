@@ -1,3 +1,6 @@
+// 🌐 Backend base URL (your deployed Vercel backend)
+const BASE_URL = "https://emi-loan.vercel.app";
+
 document.addEventListener("DOMContentLoaded", async () => {
   const user = JSON.parse(localStorage.getItem("user"));
   const welcome = document.getElementById("welcomeUser");
@@ -14,19 +17,16 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("calcBtn").addEventListener("click", async () => {
     const amount = parseFloat(document.getElementById("amount").value);
     const rate = parseFloat(document.getElementById("rate").value);
-    let months = parseFloat(document.getElementById("months").value); // entered value
+    let months = parseFloat(document.getElementById("months").value);
     const resultDiv = document.getElementById("result");
 
-    // Input validation
     if (!amount || !rate || !months) {
       resultDiv.innerHTML = "<p class='error'>⚠️ Please fill all fields.</p>";
       return;
     }
 
-    // ✅ Auto-detect whether the entered value is years or months
-    // If value is small (like 1–30), assume years, else assume months
     if (months <= 50) {
-      months = months * 12; // convert years → months
+      months = months * 12;
     }
 
     const monthlyRate = rate / 12 / 100;
@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const totalPayment = emi * months;
     const totalInterest = totalPayment - amount;
 
-    // 🧾 Display formatted result
     const years = Math.floor(months / 12);
     const remainingMonths = months % 12;
 
@@ -54,14 +53,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       </div>
     `;
 
-    // Save to MongoDB via backend (send years for compatibility)
-    await fetch("/calculate", {
+    // 🔗 Save calculation record via backend API
+    await fetch(`${BASE_URL}/calculate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         amount,
         rate,
-        years: months / 12, // backend expects years
+        years: months / 12,
         userId: user._id,
       }),
     });
@@ -72,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // 📜 Fetch and display calculation history
 async function loadHistory(userId) {
-  const res = await fetch(`/history/${userId}`);
+  const res = await fetch(`${BASE_URL}/history/${userId}`);
   const data = await res.json();
 
   const historyDiv = document.getElementById("history");
